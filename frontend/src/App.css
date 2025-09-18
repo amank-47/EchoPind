@@ -1,0 +1,261 @@
+/* EchoPind - Eco-Friendly Color Palette */
+:root {
+  /* Green Color Scheme - Primary */
+  --light-mint-green: #d1fae5;
+  --fresh-green: #86efac;
+  --medium-green: #22c55e;
+  --forest-green: #16a34a;
+  --deep-forest-green: #15803d;
+  
+  /* Accent Colors */
+  --sunshine-yellow: #fbbf24;
+  --bright-yellow: #f59e0b;
+  --trust-blue: #3b82f6;
+  --water-blue: #0ea5e9;
+  
+  /* Neutral Colors */
+  --pure-white: #ffffff;
+  --light-gray: #f8fafc;
+  --medium-gray: #64748b;
+  --dark-gray: #334155;
+  
+  /* Typography */
+  --font-primary: 'Poppins', sans-serif;
+  --font-accent: 'Comfortaa', cursive;
+  
+  /* Shadows */
+  --soft-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --medium-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --deep-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  line-height: 1.6;
+  color: var(--dark-gray);
+  background: linear-gradient(135deg, var(--light-mint-green) 0%, var(--pure-white) 100%);
+  min-height: 100vh;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 80px; /* Account for fixed header */
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-accent);
+  color: var(--deep-forest-green);
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 0.875rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--soft-shadow);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--medium-green) 0%, var(--forest-green) 100%);
+  color: var(--pure-white);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--medium-shadow);
+  background: linear-gradient(135deg, var(--forest-green) 0%, var(--deep-forest-green) 100%);
+}
+
+.btn-secondary {
+  background: var(--pure-white);
+  color: var(--medium-green);
+  border: 2px solid var(--medium-green);
+}
+
+.btn-secondary:hover {
+  background: var(--medium-green);
+  color: var(--pure-white);
+  transform: translateY(-2px);
+  box-shadow: var(--medium-shadow);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, var(--sunshine-yellow) 0%, var(--bright-yellow) 100%);
+  color: var(--deep-forest-green);
+  font-weight: 600;
+}
+
+.btn-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--medium-shadow);
+}
+
+/* Cards */
+.card {
+  background: var(--pure-white);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--soft-shadow);
+  transition: all 0.3s ease;
+  border: 1px solid var(--light-mint-green);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--deep-shadow);
+}
+
+/* Icons */
+.eco-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--fresh-green) 0%, var(--medium-green) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--pure-white);
+  margin-bottom: 1rem;
+}
+
+/* Layouts */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section {
+  padding: 4rem 0;
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Text Utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-green {
+  color: var(--medium-green);
+}
+
+.text-forest {
+  color: var(--deep-forest-green);
+}
+
+.text-yellow {
+  color: var(--bright-yellow);
+}
+
+.text-blue {
+  color: var(--trust-blue);
+}
+
+/* Background Utilities */
+.bg-green {
+  background: var(--medium-green);
+}
+
+.bg-light-green {
+  background: var(--light-mint-green);
+}
+
+.bg-forest {
+  background: var(--deep-forest-green);
+}
+
+.bg-gradient-green {
+  background: linear-gradient(135deg, var(--fresh-green) 0%, var(--medium-green) 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  .section {
+    padding: 2rem 0;
+  }
+  
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
