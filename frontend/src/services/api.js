@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 // Token management
 const TOKEN_KEY = 'echopind_access_token';
@@ -27,208 +27,91 @@ export const tokenManager = {
   }
 };
 
-// API request wrapper with automatic token handling
+// API request wrapper with automatic token handling (demo mode - no backend)
+// eslint-disable-next-line no-unused-vars
 const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  const accessToken = tokenManager.getAccessToken();
+  // In demo mode, return mock data instead of making API calls
+  console.log('Demo mode: API call to', endpoint, 'would be made here');
   
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
-    },
-    ...options
+  // Return mock success response
+  return { 
+    success: true, 
+    message: 'Demo mode - no backend available',
+    data: null 
   };
-
-  // Add authorization header if token exists
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  try {
-    const response = await fetch(url, config);
-    const data = await response.json();
-
-    // Handle token expiry
-    if (response.status === 401 && data.message === 'Token expired') {
-      const refreshSuccess = await refreshAccessToken();
-      if (refreshSuccess) {
-        // Retry the original request with new token
-        config.headers.Authorization = `Bearer ${tokenManager.getAccessToken()}`;
-        const retryResponse = await fetch(url, config);
-        return await retryResponse.json();
-      } else {
-        // Refresh failed, redirect to login
-        tokenManager.removeTokens();
-        window.location.href = '/';
-        return { error: 'Session expired' };
-      }
-    }
-
-    if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
-
-    return data;
-  } catch (error) {
-    console.error('API request failed:', error);
-    throw error;
-  }
 };
 
-// Refresh access token
+// Refresh access token (demo mode - no backend)
 const refreshAccessToken = async () => {
-  const refreshToken = tokenManager.getRefreshToken();
-  
-  if (!refreshToken) {
-    return false;
-  }
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ refreshToken })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      tokenManager.setTokens(data.tokens.accessToken, data.tokens.refreshToken);
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.error('Token refresh failed:', error);
-    return false;
-  }
+  // In demo mode, always return true since we don't need real tokens
+  console.log('Demo mode: Token refresh would happen here');
+  return true;
 };
 
-// Authentication API calls
+// Authentication API calls (demo mode - no backend)
 export const authAPI = {
-  // Register new user
+  // Register new user (demo mode)
   register: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(userData)
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok) {
-      tokenManager.setTokens(data.tokens.accessToken, data.tokens.refreshToken);
-      tokenManager.setUser(data.user);
-    }
-    
-    return { success: response.ok, data, status: response.status };
+    console.log('Demo mode: Register would happen here');
+    return { success: true, data: { user: userData }, status: 200 };
   },
 
-  // Login user
+  // Login user (demo mode)
   login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok) {
-      tokenManager.setTokens(data.tokens.accessToken, data.tokens.refreshToken);
-      tokenManager.setUser(data.user);
-    }
-    
-    return { success: response.ok, data, status: response.status };
+    console.log('Demo mode: Login would happen here');
+    return { success: true, data: { user: credentials }, status: 200 };
   },
 
-  // Logout user
+  // Logout user (demo mode)
   logout: async () => {
-    const refreshToken = tokenManager.getRefreshToken();
-    
-    try {
-      await apiRequest('/auth/logout', {
-        method: 'POST',
-        body: JSON.stringify({ refreshToken })
-      });
-    } catch (error) {
-      console.error('Logout API call failed:', error);
-    } finally {
-      tokenManager.removeTokens();
-    }
+    console.log('Demo mode: Logout would happen here');
+    tokenManager.removeTokens();
   },
 
-  // Get current user
+  // Get current user (demo mode)
   getCurrentUser: async () => {
-    try {
-      return await apiRequest('/auth/me');
-    } catch (error) {
-      console.error('Get current user failed:', error);
-      throw error;
-    }
+    const user = tokenManager.getUser();
+    return { success: true, user };
   },
 
-  // Verify token
+  // Verify token (demo mode)
   verifyToken: async () => {
-    try {
-      return await apiRequest('/auth/verify');
-    } catch (error) {
-      console.error('Token verification failed:', error);
-      return { valid: false };
-    }
+    const user = tokenManager.getUser();
+    return { valid: !!user, user };
   },
 
-  // Refresh token
+  // Refresh token (demo mode)
   refreshToken: async () => {
     return await refreshAccessToken();
   }
 };
 
-// User API calls
+// User API calls (demo mode - no backend)
 export const userAPI = {
   // Get user profile
   getProfile: async () => {
-    return await apiRequest('/user/profile');
+    const user = tokenManager.getUser();
+    return { success: true, user };
   },
 
   // Update user profile
   updateProfile: async (profileData) => {
-    const response = await fetch(`${API_BASE_URL}/user/profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenManager.getAccessToken()}`
-      },
-      body: JSON.stringify(profileData)
-    });
+    // In demo mode, just update the stored user data
+    const currentUser = tokenManager.getUser();
+    const updatedUser = { ...currentUser, ...profileData };
+    tokenManager.setUser(updatedUser);
     
-    const data = await response.json();
-    
-    if (response.ok) {
-      tokenManager.setUser(data.user);
-    }
-    
-    return { success: response.ok, data, status: response.status };
+    return { success: true, data: { user: updatedUser }, status: 200 };
   }
 };
 
-// Health check
+// Health check (demo mode - no backend)
 export const healthAPI = {
   check: async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/health`);
-      return await response.json();
-    } catch (error) {
-      console.error('Health check failed:', error);
-      return { status: 'ERROR', message: 'Backend not reachable' };
-    }
+    console.log('Demo mode: Health check would happen here');
+    return { status: 'OK', message: 'Demo mode - no backend required' };
   }
 };
 
-export default { authAPI, userAPI, healthAPI, tokenManager };
+const apiService = { authAPI, userAPI, healthAPI, tokenManager };
+export default apiService;

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { authAPI, tokenManager } from '../services/api';
+import { tokenManager } from '../services/api';
 
 // Create the auth context
 const AuthContext = createContext(null);
@@ -21,36 +21,14 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(true);
         setError(null);
 
-        // Check if we have tokens in localStorage
-        const accessToken = tokenManager.getAccessToken();
-        if (!accessToken) {
-          setIsAuthenticated(false);
-          setUser(null);
-          setIsLoading(false);
-          return;
-        }
-
-        // Verify token with the server
-        const { valid, user: userData } = await authAPI.verifyToken();
-        
-        if (valid) {
-          // Get full user data
-          const { user: currentUser } = await authAPI.getCurrentUser();
-          setUser(currentUser);
+        // Check if we have user data in localStorage (no backend)
+        const savedUser = tokenManager.getUser();
+        if (savedUser) {
+          setUser(savedUser);
           setIsAuthenticated(true);
         } else {
-          // Try refresh token
-          const refreshed = await authAPI.refreshToken();
-          if (refreshed) {
-            const { user: refreshedUser } = await authAPI.getCurrentUser();
-            setUser(refreshedUser);
-            setIsAuthenticated(true);
-          } else {
-            // Refresh failed, logout
-            setIsAuthenticated(false);
-            setUser(null);
-            tokenManager.removeTokens();
-          }
+          setIsAuthenticated(false);
+          setUser(null);
         }
       } catch (err) {
         console.error('Auth check failed:', err);
@@ -66,26 +44,27 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-  // Login function
+  // Login function (demo mode - no backend)
   const login = async (credentials) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const { success, data, status } = await authAPI.login(credentials);
+      // Demo login - accept any credentials
+      const demoUser = {
+        id: '1',
+        email: credentials.email,
+        name: credentials.email.split('@')[0],
+        fullName: credentials.email.split('@')[0],
+        type: 'student',
+        userType: 'student'
+      };
+
+      setUser(demoUser);
+      setIsAuthenticated(true);
+      tokenManager.setUser(demoUser);
       
-      if (success) {
-        setUser(data.user);
-        setIsAuthenticated(true);
-        return { success: true, user: data.user };
-      } else {
-        setError(data.message || 'Login failed');
-        return { 
-          success: false, 
-          message: data.message || 'Login failed', 
-          status 
-        };
-      }
+      return { success: true, user: demoUser };
     } catch (err) {
       console.error('Login error:', err);
       setError(err.message || 'Login failed');
@@ -95,27 +74,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Register function
+  // Register function (demo mode - no backend)
   const register = async (userData) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const { success, data, status } = await authAPI.register(userData);
+      // Demo registration - create user from form data
+      const demoUser = {
+        id: '1',
+        email: userData.email,
+        name: userData.name || userData.email.split('@')[0],
+        fullName: userData.fullName || userData.name || userData.email.split('@')[0],
+        type: userData.userType || 'student',
+        userType: userData.userType || 'student'
+      };
+
+      setUser(demoUser);
+      setIsAuthenticated(true);
+      tokenManager.setUser(demoUser);
       
-      if (success) {
-        setUser(data.user);
-        setIsAuthenticated(true);
-        return { success: true, user: data.user };
-      } else {
-        setError(data.message || 'Registration failed');
-        return { 
-          success: false, 
-          message: data.message || 'Registration failed',
-          status,
-          details: data.details
-        };
-      }
+      return { success: true, user: demoUser };
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.message || 'Registration failed');
@@ -125,11 +104,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function
+  // Logout function (demo mode - no backend)
   const logout = async () => {
     try {
       setIsLoading(true);
-      await authAPI.logout();
+      // No API call needed in demo mode
     } catch (err) {
       console.error('Logout error:', err);
     } finally {

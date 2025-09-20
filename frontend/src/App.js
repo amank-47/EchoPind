@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import LandingPage from './components/LandingPage';
 import StudentDashboard from './components/StudentDashboard';
 import Logo from './components/Logo';
-import { initializeSelectionPrevention } from './preventSelection';
 import { useScrollToTop } from './hooks/useScrollToTop';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { userAPI } from './services/api';
@@ -34,10 +33,6 @@ const LoadingSpinner = () => (
 function AppContent() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
 
-  // Initialize selection prevention on component mount
-  useEffect(() => {
-    initializeSelectionPrevention();
-  }, []);
 
   // Scroll to top when authentication state changes
   useScrollToTop(isAuthenticated, { behavior: 'smooth' });
